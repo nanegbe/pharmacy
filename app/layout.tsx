@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pharmacy Management System",
+  title: "Rivela Pharmacy System",
   description: "Manage your pharmacy efficiently",
 };
 
