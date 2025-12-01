@@ -42,7 +42,7 @@ model SaleItem {
   saleId     String
   sale       Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
   drugId     String
-  drug       Drug     @relation(fields: [drugId], references: [id])
+  drug       Drug     @relation(fields: [drugId], references: [id], onDelete: Cascade)
   drugName   String
   quantity   Int
   price      Float

@@ -68,6 +68,9 @@ export async function DELETE(
     // Check if the drug exists first
     const existing = await prisma.drug.findUnique({
       where: { id },
+      include: {
+        saleItems: true,
+      },
     });
 
     if (!existing) {
@@ -77,11 +80,16 @@ export async function DELETE(
       );
     }
 
+    // Delete the drug (cascade will automatically delete related sale items)
     await prisma.drug.delete({
       where: { id },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ 
+      success: true, 
+      message: "Drug deleted successfully",
+      deletedSaleItems: existing.saleItems.length 
+    });
   } catch (error) {
     console.error("Error deleting drug:", error);
     return NextResponse.json(
