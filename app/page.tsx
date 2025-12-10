@@ -47,7 +47,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <h1 className="text-xl font-bold text-zinc-900 dark:text-white">
-              Rivela Pharmacy System
+              Asomdwoe Pharmacy System
             </h1>
             <div className="flex items-center gap-4">
               <span className="text-sm text-zinc-600 dark:text-zinc-400">
