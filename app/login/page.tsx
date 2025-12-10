@@ -2,12 +2,19 @@
 
 import { signIn } from "next-auth/react";
 import { useState, FormEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  
+  // Simple approach to get callback URL without useSearchParams
+  const getCallbackUrl = () => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("callbackUrl") || "/";
+    }
+    return "/";
+  };
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,6 +36,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Invalid email or password");
       } else if (result?.ok) {
+        const callbackUrl = getCallbackUrl();
         router.push(callbackUrl);
         router.refresh();
       }
