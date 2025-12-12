@@ -33,6 +33,13 @@ export default function Home() {
     }
   };
 
+  // Function to handle sign out with proper redirect URL
+  const handleSignOut = () => {
+    // Use the current origin for the callback URL
+    const callbackUrl = `${window.location.origin}/login`;
+    signOut({ callbackUrl });
+  };
+
   if (status === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -54,7 +61,7 @@ export default function Home() {
                 Welcome, {session?.user?.name || session?.user?.email}
               </span>
               <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
+                onClick={handleSignOut}
                 className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
               >
                 Sign Out

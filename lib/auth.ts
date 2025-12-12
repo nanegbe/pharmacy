@@ -66,4 +66,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  // Use the NEXTAUTH_URL environment variable or fallback to the VERCEL_URL or localhost
+  secret: process.env.NEXTAUTH_SECRET,
 };
