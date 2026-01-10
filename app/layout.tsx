@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Asomdwoe Hene Pharmacy System",
+  title: "Asomdwoee Hene Pharmacy System",
   description: "Manage your pharmacy efficiently",
 };
 
