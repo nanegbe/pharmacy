@@ -6,16 +6,16 @@
         "setup": {
           "aptPkgs": ["git", "openssl"]
         },
-        "install": "npm install",
-        "build": "npm run build"
+        "install": {
+          "cmd": "npm install"
+        },
+        "build": {
+          "cmd": "npm run build"
+        }
       },
       "variables": {
         "NODE_ENV": "production"
       }
     }
-  },
-  "deploy": {
-    "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 3
   }
 }
