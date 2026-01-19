@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import DashboardLayout from "@/components/DashboardLayout";
 
 interface Drug {
   id: string;
@@ -80,34 +81,20 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
-      <nav className="bg-white border-b border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
-              >
-                ← Back
-              </Link>
-              <h1 className="text-xl font-bold text-zinc-900 dark:text-white">
-                Drug Inventory
-              </h1>
-            </div>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
-            >
-              Add New Drug
-            </button>
-          </div>
+    <DashboardLayout>
+      <div className="px-4 py-6 sm:px-0">
+        <div className="mb-6 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-white">
+            Drug Inventory
+          </h1>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
+          >
+            Add New Drug
+          </button>
         </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="mb-6 flex flex-col sm:flex-row gap-4">
             <input
               type="text"
               placeholder="Search by drug name..."
@@ -237,7 +224,6 @@ export default function InventoryPage() {
             </div>
           )}
         </div>
-      </main>
 
       {(showAddModal || editingDrug) && (
         <DrugModal
@@ -253,7 +239,7 @@ export default function InventoryPage() {
           }}
         />
       )}
-    </div>
+    </DashboardLayout>
   );
 }
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import DashboardLayout from "@/components/DashboardLayout";
 
 interface Drug {
   id: string;
@@ -145,37 +146,22 @@ export default function SalesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
-      <nav className="bg-white border-b border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
-              >
-                ← Back
-              </Link>
-              <h1 className="text-xl font-bold text-zinc-900 dark:text-white">
-                Sales Management
-              </h1>
-            </div>
-            <button
-              onClick={() => {
-                setShowNewSaleModal(true);
-                setSelectedItems([{ drugId: "", quantity: 1 }]);
-              }}
-              className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
-            >
-              New Sale
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {loading ? (
+    <DashboardLayout>
+      <div className="px-4 py-6 sm:px-0">
+        <div className="mb-6 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-white">
+            Sales Management
+          </h1>
+          <button
+            onClick={() => {
+              setShowNewSaleModal(true);
+              setSelectedItems([{ drugId: "", quantity: 1 }]);
+            }}
+            className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
+          >
+            New Sale
+          </button>
+        </div>          {loading ? (
             <div className="text-center py-12">
               <p className="text-zinc-600 dark:text-zinc-400">Loading...</p>
             </div>
@@ -225,7 +211,6 @@ export default function SalesPage() {
             </div>
           )}
         </div>
-      </main>
 
       {showNewSaleModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -339,6 +324,6 @@ export default function SalesPage() {
           </div>
         </div>
       )}
-    </div>
+    </DashboardLayout>
   );
 }
