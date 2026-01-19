@@ -4,7 +4,21 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import DashboardLayout from "@/components/DashboardLayout";
 
-// ... existing interface definitions ...
+interface TopDrug {
+  name: string;
+  quantity: number;
+  revenue: number;
+}
+
+interface Analytics {
+  totalRevenue: number;
+  totalDrugsSold: number;
+  salesCount: number;
+  topSellingDrugs: TopDrug[];
+  period: string;
+  fromDate: string;
+  toDate: string;
+}
 
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
@@ -14,7 +28,62 @@ export default function AnalyticsPage() {
   const [customEndDate, setCustomEndDate] = useState("");
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
 
-  // ... existing functions ...
+  useEffect(() => {
+    fetchAnalytics();
+  }, [period]);
+
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    try {
+      let url = `/api/analytics?period=${period}`;
+      
+      if (period === "custom" && customStartDate && customEndDate) {
+        url += `&startDate=${customStartDate}&endDate=${customEndDate}`;
+      }
+
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        setAnalytics(data);
+      }
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePeriodChange = (newPeriod: string) => {
+    setPeriod(newPeriod);
+    if (newPeriod === "custom") {
+      setShowCustomDatePicker(true);
+    } else {
+      setShowCustomDatePicker(false);
+    }
+  };
+
+  const applyCustomDateRange = () => {
+    if (customStartDate && customEndDate) {
+      fetchAnalytics();
+    }
+  };
+
+  const getPeriodLabel = () => {
+    switch (period) {
+      case "24h":
+        return "Last 24 Hours";
+      case "7d":
+        return "Last 7 Days";
+      case "30d":
+        return "Last 30 Days";
+      case "12m":
+        return "Last 12 Months";
+      case "custom":
+        return "Custom Range";
+      default:
+        return "Last 24 Hours";
+    }
+  };
 
   return (
     <DashboardLayout>
