@@ -7,20 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enum for user roles
-enum Role {
-  ADMIN
-  SALES
-}
-
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
   password  String
-  role      Role     @default(SALES)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  role      Role     @default(SALES)
 }
 
 model Drug {
@@ -44,14 +38,19 @@ model Sale {
 }
 
 model SaleItem {
-  id         String   @id @default(cuid())
-  saleId     String
-  sale       Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  drugId     String
-  drug       Drug     @relation(fields: [drugId], references: [id], onDelete: Cascade)
-  drugName   String
-  quantity   Int
-  price      Float
-  subtotal   Float
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  saleId    String
+  drugId    String
+  drugName  String
+  quantity  Int
+  price     Float
+  subtotal  Float
+  createdAt DateTime @default(now())
+  drug      Drug     @relation(fields: [drugId], references: [id], onDelete: Cascade)
+  sale      Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  SALES
 }
