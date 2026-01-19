@@ -4,14 +4,12 @@ import { UserRole } from '@/types/user';
 import bcrypt from 'bcryptjs';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { getToken } from 'next-auth/jwt';
 
 export async function GET(req: NextRequest) {
   try {
-    // Get token from request cookies
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const session = await getServerSession(authOptions);
     
-    if (!token || token.role !== UserRole.ADMIN) {
+    if (!session || session.user?.role !== UserRole.ADMIN) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
@@ -46,10 +44,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // Get token from request cookies
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const session = await getServerSession(authOptions);
     
-    if (!token || token.role !== UserRole.ADMIN) {
+    if (!session || session.user?.role !== UserRole.ADMIN) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
@@ -120,10 +117,9 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    // Get token from request cookies
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const session = await getServerSession(authOptions);
     
-    if (!token || token.role !== UserRole.ADMIN) {
+    if (!session || session.user?.role !== UserRole.ADMIN) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' },
