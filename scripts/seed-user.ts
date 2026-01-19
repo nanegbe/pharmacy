@@ -22,7 +22,7 @@ async function seedAdminUser() {
         email: 'admin@pharmacy.local',
         name: 'Admin User',
         password: hashedPassword,
-        role: 'admin', // assuming you want admin role
+        role: 'ADMIN', // assuming you want admin role
       },
     });
 
