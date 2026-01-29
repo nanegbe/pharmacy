@@ -34,6 +34,7 @@ export default function SalesPage() {
   const [selectedItems, setSelectedItems] = useState<{
     drugId: string;
     quantity: number;
+    search: string;
   }[]>([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -55,6 +56,12 @@ export default function SalesPage() {
     }
   };
 
+  const getFilteredDrugs = (searchTerm: string) => {
+    return drugs.filter(drug =>
+      drug.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
   const fetchSales = async () => {
     try {
       const response = await fetch("/api/sales");
@@ -70,17 +77,19 @@ export default function SalesPage() {
   };
 
   const addItem = () => {
-    setSelectedItems([...selectedItems, { drugId: "", quantity: 1 }]);
+    setSelectedItems([...selectedItems, { drugId: "", quantity: 1, search: "" }]);
   };
 
   const removeItem = (index: number) => {
     setSelectedItems(selectedItems.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: "drugId" | "quantity", value: string | number) => {
+  const updateItem = (index: number, field: "drugId" | "quantity" | "search", value: string | number) => {
     const updated = [...selectedItems];
     if (field === "drugId") {
       updated[index].drugId = value as string;
+    } else if (field === "search") {
+      updated[index].search = value as string;
     } else {
       updated[index].quantity = parseInt(value as string) || 1;
     }
@@ -155,7 +164,7 @@ export default function SalesPage() {
           <button
             onClick={() => {
               setShowNewSaleModal(true);
-              setSelectedItems([{ drugId: "", quantity: 1 }]);
+              setSelectedItems([{ drugId: "", quantity: 1, search: "" }]);
             }}
             className="px-4 py-2 text-sm font-medium text-white bg-zinc-900 rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
           >
@@ -237,18 +246,34 @@ export default function SalesPage() {
                       <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                         Drug
                       </label>
-                      <select
-                        value={item.drugId}
-                        onChange={(e) => updateItem(index, "drugId", e.target.value)}
-                        className="w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
-                      >
-                        <option value="">Select a drug</option>
-                        {drugs.map((drug) => (
-                          <option key={drug.id} value={drug.id}>
-                            {drug.name} - GHS{drug.price.toFixed(2)} (Stock: {drug.quantity})
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          value={item.drugId}
+                          onChange={(e) => updateItem(index, "drugId", e.target.value)}
+                          className="w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                        >
+                          <option value="">Select a drug</option>
+                          {getFilteredDrugs(item.search || "").map((drug) => (
+                            <option key={drug.id} value={drug.id}>
+                              {drug.name} - GHS{drug.price.toFixed(2)} (Stock: {drug.quantity})
+                            </option>
+                          ))}
+                        </select>
+                        {item.drugId && (
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                              {drugs.find(d => d.id === item.drugId)?.name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Type to filter drugs..."
+                        value={item.search || ""}
+                        onChange={(e) => updateItem(index, "search", e.target.value)}
+                        className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm"
+                      />
                     </div>
 
                     <div className="w-32">

@@ -60,8 +60,14 @@ export async function GET(request: Request) {
       0
     );
 
-    // Calculate top selling drugs
-    const drugSales = new Map<string, { name: string; quantity: number; revenue: number }>();
+    // Calculate top selling drugs with proper unit price calculation
+    const drugSales = new Map<string, { 
+      name: string; 
+      quantity: number; 
+      revenue: number;
+      unitPrice: number;
+      totalAmountGenerated: number;
+    }>();
 
     sales.forEach((sale: any) => {
       sale.items.forEach((item: any) => {
@@ -69,11 +75,17 @@ export async function GET(request: Request) {
         if (existing) {
           existing.quantity += item.quantity;
           existing.revenue += item.subtotal;
+          // Recalculate average unit price
+          existing.unitPrice = existing.revenue / existing.quantity;
+          existing.totalAmountGenerated = existing.quantity * existing.unitPrice;
         } else {
+          const unitPrice = item.price; // Use the price from sale item
           drugSales.set(item.drugId, {
             name: item.drugName,
             quantity: item.quantity,
             revenue: item.subtotal,
+            unitPrice: unitPrice,
+            totalAmountGenerated: item.quantity * unitPrice,
           });
         }
       });
@@ -81,16 +93,29 @@ export async function GET(request: Request) {
 
     const topSellingDrugs = Array.from(drugSales.values())
       .sort((a, b) => b.quantity - a.quantity)
-      .slice(0, 5);
+      .slice(0, 100); // Show more drugs when "Show All" is clicked
 
     // Get sales count
     const salesCount = sales.length;
+
+    // Sort all drugs alphabetically for the "Show All" view
+    const allDrugsSorted = Array.from(drugSales.values())
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     return NextResponse.json({
       totalRevenue,
       totalDrugsSold,
       salesCount,
-      topSellingDrugs,
+      topSellingDrugs: topSellingDrugs.map(drug => ({
+        ...drug,
+        unitPrice: parseFloat(drug.unitPrice.toFixed(2)),
+        totalAmountGenerated: parseFloat(drug.totalAmountGenerated.toFixed(2))
+      })),
+      allDrugsSorted: allDrugsSorted.map(drug => ({
+        ...drug,
+        unitPrice: parseFloat(drug.unitPrice.toFixed(2)),
+        totalAmountGenerated: parseFloat(drug.totalAmountGenerated.toFixed(2))
+      })),
       period,
       fromDate,
       toDate,

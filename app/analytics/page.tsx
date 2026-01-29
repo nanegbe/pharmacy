@@ -8,6 +8,8 @@ interface TopDrug {
   name: string;
   quantity: number;
   revenue: number;
+  unitPrice: number;
+  totalAmountGenerated: number;
 }
 
 interface Analytics {
@@ -15,6 +17,7 @@ interface Analytics {
   totalDrugsSold: number;
   salesCount: number;
   topSellingDrugs: TopDrug[];
+  allDrugsSorted: TopDrug[];
   period: string;
   fromDate: string;
   toDate: string;
@@ -27,6 +30,7 @@ export default function AnalyticsPage() {
   const [customStartDate, setCustomStartDate] = useState("");
   const [customEndDate, setCustomEndDate] = useState("");
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [showAllDrugs, setShowAllDrugs] = useState(false);
 
   useEffect(() => {
     fetchAnalytics();
@@ -83,6 +87,10 @@ export default function AnalyticsPage() {
       default:
         return "Last 24 Hours";
     }
+  };
+
+  const toggleShowAllDrugs = () => {
+    setShowAllDrugs(!showAllDrugs);
   };
 
   return (
@@ -240,40 +248,59 @@ export default function AnalyticsPage() {
 
             {/* Top Selling Drugs */}
             <div className="bg-white shadow rounded-lg p-6 dark:bg-zinc-900">
-              <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-                Top Selling Drugs
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  Top Selling Drugs
+                </h2>
+                <button
+                  onClick={toggleShowAllDrugs}
+                  className="px-4 py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-sm font-medium transition-colors"
+                >
+                  {showAllDrugs ? "Show Top Drugs" : "Show All Drugs"}
+                </button>
+              </div>
+              
               {analytics.topSellingDrugs.length === 0 ? (
                 <p className="text-zinc-600 dark:text-zinc-400 text-center py-8">
                   No sales data available for this period
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {analytics.topSellingDrugs.map((drug, index) => (
+                  {(showAllDrugs 
+                    ? analytics.allDrugsSorted
+                    : analytics.topSellingDrugs
+                  ).map((drug, index) => (
                     <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border border-zinc-200 dark:border-zinc-800 rounded-md"
+                      key={`${drug.name}-${index}`}
+                      className="flex items-center justify-between p-4 border border-zinc-200 dark:border-zinc-800 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                          <span className="text-sm font-bold text-zinc-900 dark:text-white">
-                            {index + 1}
-                          </span>
-                        </div>
+                        {!showAllDrugs && (
+                          <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                            <span className="text-sm font-bold text-zinc-900 dark:text-white">
+                              {index + 1}
+                            </span>
+                          </div>
+                        )}
                         <div>
                           <p className="font-medium text-zinc-900 dark:text-white">
                             {drug.name}
                           </p>
-                          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                            {drug.quantity} units sold
-                          </p>
+                          <div className="flex gap-4 mt-1">
+                            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                              <span className="font-medium">{drug.quantity}</span> units sold
+                            </p>
+                            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                              Unit Price: <span className="font-medium">GHS{drug.unitPrice.toFixed(2)}</span>
+                            </p>
+                          </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-zinc-900 dark:text-white">
-                          GHS{drug.revenue.toFixed(2)}
+                        <p className="font-bold text-zinc-900 dark:text-white text-lg">
+                          GHS{drug.totalAmountGenerated.toFixed(2)}
                         </p>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400">revenue</p>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">Revenue</p>
                       </div>
                     </div>
                   ))}

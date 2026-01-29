@@ -26,7 +26,7 @@ async function seedAdminUser() {
       },
     });
 
-    console.log('Admin user created successfully:', adminUser.email);
+    console.log('Admin user created successfully.:', adminUser.email);
   } catch (error) {
     console.error('Error creating admin user:', error);
   } finally {
